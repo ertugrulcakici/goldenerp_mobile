@@ -100,7 +100,7 @@ class _CustomDataGridPageState extends ConsumerState<CustomDataGridPage> {
         allowColumnsResizing: true,
         allowPullToRefresh: true,
         allowTriStateSorting: true,
-        columnWidthMode: ColumnWidthMode.auto,
+        columnWidthMode: ColumnWidthMode.fitByColumnName,
         source: ref.watch(provider).dataSource!,
         columns: ref
             .watch(provider)
