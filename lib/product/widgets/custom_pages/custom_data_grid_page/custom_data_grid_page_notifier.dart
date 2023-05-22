@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:goldenerp/core/services/network/network_service.dart';
 import 'package:goldenerp/core/services/network/response_model.dart';
@@ -51,6 +53,7 @@ class CustomDataGridPageNotifier extends ChangeNotifier
       if (responseModel.success) {
         ListDataModelOfListOfStockFicheList typeDataModel =
             ListDataModelOfListOfStockFicheList.fromJson(responseModel.data!);
+        log(typeDataModel.data.reversed.toList().toString());
         dataSource ??= OwnDataGridSource(
           rawData: typeDataModel.data.reversed.toList(),
           fieldModels: typeDataModel.fields!,

@@ -223,19 +223,23 @@ class _SearchableWidgetState extends State<SearchableWidget> {
   void _addToSubmitData() {
     if (widget.submit_data_temps[widget.fieldModel.table_name]?.isEmpty ??
         true) {
-      PopupHelper.showErrorPopup(
-          "Sistemsel bir hata oluştu. Gelişitiriciye bildirin");
+      PopupHelper.showErrorPopup("Herhangi bir ürün seçili değil");
       return;
     }
     if (widget.currentFormKey.currentState!.validate() &&
         widget.submit_data_temps.isNotEmpty) {
+      widget.currentFormKey.currentState!.save();
+
+      // condition varsa eklemiyorum
       // eğer submit datamda conditiona göre veri varsa ekletmiyorum
       if (widget.genericPageCreator.conditions != null) {
         for (var condition in widget.genericPageCreator.conditions!) {
           for (var line in widget.submit_data[condition.table_name]) {
             for (var colName in condition.col_names) {
-              if (line[colName] ==
-                  widget.submit_data_temps[condition.table_name]![colName]) {
+              var data1 = line[colName];
+              var data2 =
+                  widget.submit_data_temps[condition.table_name]![colName];
+              if (data1 != null && data2 != null && data1 == data2) {
                 widget.submit_data_temps[condition.table_name]!.clear();
                 _searchController.clear();
                 widget.genericPageCreator.controllers[condition.table_name]!
@@ -251,7 +255,6 @@ class _SearchableWidgetState extends State<SearchableWidget> {
         }
       }
 
-      widget.currentFormKey.currentState!.save();
       FocusScope.of(context).unfocus();
       _searchController.clear();
       if (widget.submit_data_temps[widget.fieldModel.table_name!]!["ID"] ==
@@ -297,7 +300,7 @@ class _SearchableWidgetState extends State<SearchableWidget> {
 
       bool addNewRow = true;
 
-      // row action varsa
+      // row action varsa (bu gruplama için)
       if (widget.genericPageCreator.row_action != null &&
           widget.genericPageCreator.row_action!.group == false) {
         // submit data da, submit data tempdeki ile aynı satır varsa (rowActiondaki keylere göre)
@@ -378,6 +381,7 @@ class _SearchableWidgetState extends State<SearchableWidget> {
         log("box :${widget.box.toMap()}");
       }
       widget.mainSetState();
+      PopupHelper.showInfoSnackBar("Eklendi");
     }
   }
 
