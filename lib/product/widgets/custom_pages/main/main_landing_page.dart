@@ -19,10 +19,10 @@ class CustomScaffold extends ConsumerStatefulWidget {
   final String pageTitle;
   // -------- Scaffold parameters
   final Widget body;
-  bool? resizeToAvoidBottomInset;
-  Widget? floatingActionButton;
+  final bool? resizeToAvoidBottomInset;
+  final Widget? floatingActionButton;
 
-  CustomScaffold({
+  const CustomScaffold({
     super.key,
     required this.pageTitle,
     required this.activeBack,
@@ -100,7 +100,7 @@ class _CustomScaffoldState extends ConsumerState<CustomScaffold>
           ),
         ),
         // scaffold parameters
-        resizeToAvoidBottomInset: widget.resizeToAvoidBottomInset,
+        resizeToAvoidBottomInset: widget.resizeToAvoidBottomInset ?? false,
         floatingActionButton: widget.floatingActionButton,
 
         //

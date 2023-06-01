@@ -5,7 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 part 'user_model.g.dart';
 
 // giriş yapmış kullanıcı id si last_logged_in olacak. Giriş yapılamazsa bu key temizlenecek.
-@HiveType(typeId: CacheServiceTypeIdList.userModelTypeId)
+@HiveType(typeId: CacheConstants.userModelTypeId)
 class UserModel extends HiveObject {
   @HiveField(0)
   late final int id;

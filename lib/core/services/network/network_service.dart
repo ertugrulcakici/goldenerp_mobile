@@ -8,7 +8,6 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:goldenerp/core/services/navigation/navigation_service.dart';
 import 'package:goldenerp/core/services/network/response_model.dart';
 import 'package:goldenerp/core/services/theme/custom_colors.dart';
-import 'package:goldenerp/product/constants/app_constants.dart';
 
 abstract class NetworkService {
   static late Dio _dio;
@@ -16,15 +15,17 @@ abstract class NetworkService {
   static const debugDetailed = true;
 
   static int? _requestTime;
+  static bool initialized = false;
+  static bool isUserSet = false;
 
-  static void init() {
+  static void init(String baseUrl) {
     _requestTime = 30000;
 
     _dio = Dio(BaseOptions(
         connectTimeout: _requestTime,
         receiveTimeout: _requestTime,
         contentType: Headers.jsonContentType,
-        baseUrl: AppConstants.APP_API!));
+        baseUrl: baseUrl));
 
     (_dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
         (HttpClient client) {
@@ -32,12 +33,14 @@ abstract class NetworkService {
           (X509Certificate cert, String host, int port) => true;
       return null;
     };
+    initialized = true;
   }
 
   static void setUser(
       {required String username, required String password}) async {
     _dio.options.headers["Username"] = username;
     _dio.options.headers["Password"] = password;
+    isUserSet = true;
   }
 
   static Future<ResponseModel<T>> get<T>(String url,
@@ -78,7 +81,7 @@ abstract class NetworkService {
       return ResponseModel<T>.fromJson(data.data!);
     } catch (e) {
       log("Hata: $e", name: "NetworkService");
-      int? statusCode = (e as DioError).response!.statusCode;
+      int? statusCode = (e as DioError).response?.statusCode;
       EasyLoading.dismiss();
 
       // show alert dialog
@@ -140,7 +143,7 @@ abstract class NetworkService {
     } catch (e) {
       log("Hata: $e");
       // token expired
-      int? statusCode = (e as DioError).response!.statusCode;
+      int? statusCode = (e as DioError).response?.statusCode;
       EasyLoading.dismiss();
 
       // show alert dialog

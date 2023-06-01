@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:goldenerp/core/services/auth/auth_service.dart';
 import 'package:goldenerp/core/services/navigation/navigation_service.dart';
+import 'package:goldenerp/core/services/network/network_service.dart';
 import 'package:goldenerp/core/services/theme/custom_colors.dart';
+import 'package:goldenerp/core/services/utils/helpers/popup_helper.dart';
 import 'package:goldenerp/core/services/utils/validators/login_validators.dart';
 import 'package:goldenerp/core/utils/extensions/ui_extensions.dart';
 import 'package:goldenerp/product/widgets/custom_pages/custom_safearea.dart';
@@ -167,6 +169,11 @@ class _LoginViewState extends ConsumerState<LoginView> {
 
   void _login() {
     // validate the form
+    if (NetworkService.initialized == false) {
+      PopupHelper.showErrorPopup("Herhangi bir firma seçilmedi. Ayarlardan "
+          "firma seçimi yapınız.");
+      return;
+    }
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       AuthService.instance.login(

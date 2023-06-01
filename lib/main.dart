@@ -17,10 +17,15 @@ import 'product/cubits/menu_data_cubit/menu_data_cubit.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await CacheService.init();
-  AppConstants.APP_API =
-      CacheService.instance.appSettingsBox.get(CacheConstants.app_api) ??
-          "https://turbim.com/api/goldenerp/";
-  NetworkService.init();
+  // AppConstants.APP_API =
+  //     CacheService.instance.appSettingsBox.get(CacheConstants.app_api) ??
+  //         "https://turbim.com/api/goldenerp/";
+  // https://turbim.com/api/goldenerp/
+  int? firmId =
+      (CacheService.instance.appSettingsBox.get(CacheConstants.firm_id));
+  if (firmId != null) {
+    NetworkService.init(CacheService.instance.firms.get(firmId)!.api);
+  }
   runApp(const App());
 
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,

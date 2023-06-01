@@ -1,86 +1,127 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:goldenerp/core/services/auth/auth_service.dart';
-import 'package:goldenerp/core/services/cache/cache_service.dart';
-import 'package:goldenerp/core/services/navigation/navigation_service.dart';
-import 'package:goldenerp/core/services/network/network_service.dart';
 import 'package:goldenerp/core/services/utils/helpers/popup_helper.dart';
-import 'package:goldenerp/core/utils/extensions/ui_extensions.dart';
-import 'package:goldenerp/product/constants/app_constants.dart';
-import 'package:goldenerp/product/constants/cache_constants.dart';
+import 'package:goldenerp/product/models/structure/firm_model.dart';
 import 'package:goldenerp/product/widgets/custom_pages/main/main_landing_page.dart';
+import 'package:goldenerp/view/settings/settings_notifier.dart';
 
 class SettingsView extends ConsumerStatefulWidget {
-  const SettingsView({Key? key}) : super(key: key);
+  const SettingsView({super.key});
 
   @override
-  _SettingsViewState createState() => _SettingsViewState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _SettingsViewState();
 }
 
 class _SettingsViewState extends ConsumerState<SettingsView> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final Map<String, dynamic> formData = {'api': AppConstants.APP_API};
+  ChangeNotifierProvider<SettingsNotifier> provider =
+      ChangeNotifierProvider((ref) => SettingsNotifier());
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      ref.read(provider).getFirms();
+    });
+    super.initState();
+  }
 
   @override
   void dispose() {
-    _formKey.currentState?.dispose();
     super.dispose();
   }
 
   Widget _body() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.smw, vertical: 20.smh),
-      child: Center(
-        child: Form(
-          key: _formKey,
-          child: TextFormField(
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return "Api boş olamaz";
-              }
-              return null;
-            },
-            onSaved: (value) {
-              formData["api"] = value!;
-            },
-            initialValue: AppConstants.APP_API,
-            decoration: const InputDecoration(
-              labelText: "Api",
-              hintText: "Api",
-            ),
+    return Column(children: [_firms()]);
+  }
+
+  Widget _firms() {
+    return Column(
+      children: [
+        const Text("Firmalar"),
+        const Divider(),
+        Card(
+          child: ListTile(
+            onTap: _addFirmPopup,
+            title: const Center(child: Icon(Icons.add)),
           ),
         ),
-      ),
+        ListView.builder(
+          itemCount: ref.watch(provider).firms.length,
+          shrinkWrap: true,
+          itemBuilder: (context, index) =>
+              _firmItem(ref.watch(provider).firms[index]),
+        )
+      ],
     );
   }
 
-  Widget _fab() {
-    return FloatingActionButton.extended(
-      onPressed: _save,
-      icon: const Icon(Icons.save),
-      label: const Text("Kaydet"),
-    );
-  }
-
-  void _save() async {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-      final String api = formData["api"]!;
-      AppConstants.APP_API = api;
-      await CacheService.instance.appSettingsBox
-          .put(CacheConstants.app_api, api);
-
-      NetworkService.init();
-      if (AuthService.instance.isLoggedIn) {
-        NetworkService.setUser(
-          username: AuthService.instance.user!.logonName,
-          password: AuthService.instance.user!.password,
-        );
-      }
-
-      PopupHelper.showInfoSnackBar("Değişiklikler kaydedildi");
-      NavigationService.instance.back();
-    }
+  Future<void> _addFirmPopup() async {
+    GlobalKey<FormState> firmFormKey = GlobalKey<FormState>();
+    Map<String, dynamic> firmData = {};
+    showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Form(
+                key: firmFormKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text("Firma Ekle"),
+                    TextFormField(
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Firma Adı boş olamaz";
+                        }
+                        return null;
+                      },
+                      onSaved: (newValue) {
+                        firmData["name"] = newValue!;
+                      },
+                      decoration: const InputDecoration(
+                        labelText: "Firma Adı",
+                        hintText: "Firma Adı",
+                      ),
+                    ),
+                    TextFormField(
+                      autocorrect: false,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Firma Api boş olamaz";
+                        }
+                        return null;
+                      },
+                      onSaved: (newValue) {
+                        firmData["api"] = newValue!;
+                      },
+                      decoration: const InputDecoration(
+                        labelText: "Firma Api",
+                        hintText: "Firma Api",
+                      ),
+                    ),
+                    ElevatedButton(
+                        onPressed: () async {
+                          if (firmFormKey.currentState!.validate()) {
+                            firmFormKey.currentState!.save();
+                            if (await ref.read(provider).addFirm(firmData)) {
+                              PopupHelper.showInfoSnackBar("Firma Eklendi");
+                              Navigator.pop(context);
+                            } else {
+                              PopupHelper.showInfoSnackBar("Firma Eklenemedi");
+                            }
+                          } else {}
+                        },
+                        child: const Text("Kaydet"))
+                  ],
+                ),
+              ),
+            ),
+          );
+        }).then((value) {
+      firmFormKey.currentState?.dispose();
+      ref.read(provider).getFirms();
+    });
   }
 
   @override
@@ -88,8 +129,35 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     return CustomScaffold(
       pageTitle: "Ayarlar",
       activeBack: true,
-      floatingActionButton: _fab(),
       body: _body(),
+    );
+  }
+
+  Widget _firmItem(FirmModel firm) {
+    return Card(
+      child: ListTile(
+        onTap: () async {
+          if (await ref.read(provider).selectFirmById(firm.id)) {
+            PopupHelper.showInfoSnackBar("Firma Seçildi");
+          } else {
+            PopupHelper.showInfoSnackBar("Firma Seçilemedi");
+          }
+        },
+        trailing: IconButton(
+          icon: const Icon(Icons.delete),
+          onPressed: () async {
+            if (await ref.read(provider).deleteFirmById(firm.id)) {
+              PopupHelper.showInfoSnackBar("Firma Silindi");
+            } else {
+              PopupHelper.showInfoSnackBar("Firma Silinemedi");
+            }
+          },
+        ),
+        title: Text(firm.name),
+        subtitle: Text(firm.api),
+        tileColor:
+            firm.id == ref.watch(provider).selectedFirmId ? Colors.green : null,
+      ),
     );
   }
 }

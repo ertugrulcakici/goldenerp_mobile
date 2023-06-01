@@ -11,43 +11,75 @@ abstract class CustomAppBar {
     return PreferredSize(
         preferredSize: Size(AppConstants.designWidth.smw, 50.smh),
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 10.smw),
-          color: CustomColors.primaryColor,
-          child: Center(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                backActive
-                    ? IconButton(
-                        onPressed: () {
-                          NavigationService.instance.back();
-                        },
-                        icon: const Icon(Icons.arrow_back_ios,
-                            color: Colors.white))
-                    : InkWell(
-                        onTap: callBack,
-                        child: Image.asset("assets/images/logo.png",
-                            width: 33.smw, height: 28.smh),
-                      ),
-                Text(
-                  title,
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.w600),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.notifications, color: Colors.white),
-                    SizedBox(width: 10.smw),
-                    Image.asset("assets/images/logo.png",
-                        width: 22.smh, height: 22.smh)
-                  ],
-                )
-              ],
-            ),
-          ),
-        ));
+            padding: EdgeInsets.symmetric(horizontal: 10.smw),
+            color: CustomColors.primaryColor,
+            child: backActive
+                ? Stack(
+                    children: [
+                      Positioned(
+                          left: 0,
+                          child: IconButton(
+                              onPressed: () {
+                                NavigationService.instance.back();
+                              },
+                              icon: const Icon(Icons.arrow_back_ios,
+                                  color: Colors.white))),
+                      Positioned.fill(
+                          child: Center(
+                        child: Text(
+                          title,
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.w600),
+                        ),
+                      )),
+                    ],
+                  )
+                : Center(
+                    child: Text(
+                    title,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.w600),
+                  ))
+
+            // Center(
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //     children: [
+            //       backActive
+            //           ? IconButton(
+            //               onPressed: () {
+            //                 NavigationService.instance.back();
+            //               },
+            //               icon: const Icon(Icons.arrow_back_ios,
+            //                   color: Colors.white))
+            //           : InkWell(
+            //               onTap: callBack,
+            //               child: Image.asset("assets/images/logo.png",
+            //                   width: 33.smw, height: 28.smh),
+            //             ),
+            //       Text(
+            //         title,
+            //         style: TextStyle(
+            //             color: Colors.white,
+            //             fontSize: 18.sp,
+            //             fontWeight: FontWeight.w600),
+            //       ),
+            //       Row(
+            //         mainAxisAlignment: MainAxisAlignment.center,
+            //         children: [
+            //           const Icon(Icons.notifications, color: Colors.white),
+            //           SizedBox(width: 10.smw),
+            //           Image.asset("assets/images/logo.png",
+            //               width: 22.smh, height: 22.smh)
+            //         ],
+            //       )
+            //     ],
+            //   ),
+            // ),
+            ));
   }
 }

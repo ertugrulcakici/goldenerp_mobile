@@ -4,9 +4,9 @@ abstract class AppConstants {
   static const int designWidth = 360;
   static const int designHeight = 800;
   // late final String APP_API = "https://turbim.com/api/goldenerp/";
-  static String? APP_API;
+  // static String? APP_API;
   static const String appVersion = "1.0.0";
 
-  // temporary
-  static const String tempFirmId = "tempFirm1";
+  // // temporary
+  // static const String tempFirmId = "tempFirm1";
 }

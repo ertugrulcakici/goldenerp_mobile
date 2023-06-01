@@ -9,10 +9,7 @@ class HomeView extends ConsumerStatefulWidget {
 }
 
 class _HomeViewState extends ConsumerState<HomeView> {
-  // Map<String, Widget Function(BuildContext)> routes = {
-  //   "Stok Kartları": (context) => const StokKartlariView(),
-  //   "Malzeme Fişleri": (context) => const MalzemeFisleriView()
-  // };
+  // ChangeNotifierProvider<MainLandingPage> _mainLandingPage = ChangeNotifierProvider((ref) => MainLandingPage());
 
   @override
   Widget build(BuildContext context) {
@@ -20,52 +17,12 @@ class _HomeViewState extends ConsumerState<HomeView> {
   }
 
   Widget _body() {
-    return Center(
-        child: TextButton(
-      onPressed: () {},
-      child: const Text("Main"),
-    ));
-  }
+    // if (condition) {
 
-  // Padding _body() {
-  //   return Padding(
-  //       padding: EdgeInsets.symmetric(horizontal: 20.smw, vertical: 20.smh),
-  //       child: GridView.custom(
-  //         childrenDelegate: SliverChildBuilderDelegate(
-  //             (context, index) => InkWell(
-  //                   onTap: () {
-  //                     NavigationService.instance.navigateToPage(
-  //                         routes[routes.keys.toList()[index]]!(context));
-  //                   },
-  //                   child: Container(
-  //                     decoration: BoxDecoration(
-  //                       color: CustomColors.secondaryColor,
-  //                       borderRadius: BorderRadius.circular(30),
-  //                     ),
-  //                     child: Column(
-  //                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  //                       children: [
-  //                         Image.asset("assets/images/home_page_box.png"),
-  //                         Text(
-  //                           routes.keys.toList()[index],
-  //                           style: const TextStyle(
-  //                             color: Colors.white,
-  //                             fontSize: 20,
-  //                             fontWeight: FontWeight.bold,
-  //                           ),
-  //                         ),
-  //                       ],
-  //                     ),
-  //                   ),
-  //                 ),
-  //             childCount: routes.length),
-  //         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-  //           mainAxisSpacing: 20.smh,
-  //           childAspectRatio: 1,
-  //           crossAxisSpacing: 20.smh,
-  //           crossAxisCount: 2,
-  //         ),
-  //       ),
-  //     );
-  // }
+    // }
+    // return ;
+    return const Center(
+      child: Text("Home"),
+    );
+  }
 }
