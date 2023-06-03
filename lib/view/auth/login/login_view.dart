@@ -170,8 +170,8 @@ class _LoginViewState extends ConsumerState<LoginView> {
   void _login() {
     // validate the form
     if (NetworkService.initialized == false) {
-      PopupHelper.showErrorPopup("Herhangi bir firma seçilmedi. Ayarlardan "
-          "firma seçimi yapınız.");
+      PopupHelper.showErrorPopup(
+          "Herhangi bir API girilmedi. Ayarlardan bir API giriniz.");
       return;
     }
     if (_formKey.currentState!.validate()) {

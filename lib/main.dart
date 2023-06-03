@@ -21,10 +21,10 @@ Future<void> main() async {
   //     CacheService.instance.appSettingsBox.get(CacheConstants.app_api) ??
   //         "https://turbim.com/api/goldenerp/";
   // https://turbim.com/api/goldenerp/
-  int? firmId =
-      (CacheService.instance.appSettingsBox.get(CacheConstants.firm_id));
-  if (firmId != null) {
-    NetworkService.init(CacheService.instance.firms.get(firmId)!.api);
+  dynamic api =
+      CacheService.instance.appSettingsBox.get(CacheConstants.app_api);
+  if (api != null && api is String && api.isNotEmpty) {
+    NetworkService.init(api);
   }
   runApp(const App());
 
