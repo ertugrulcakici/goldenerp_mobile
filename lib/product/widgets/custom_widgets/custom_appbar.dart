@@ -36,14 +36,28 @@ abstract class CustomAppBar {
                       )),
                     ],
                   )
-                : Center(
-                    child: Text(
-                    title,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w600),
-                  ))
+                : Stack(
+                    children: [
+                      Positioned(
+                          left: 0,
+                          top: 0,
+                          bottom: 0,
+                          child: InkWell(
+                            onTap: callBack,
+                            child: Image.asset("assets/images/logo.png",
+                                width: 33.smw, height: 28.smh),
+                          )),
+                      Positioned.fill(
+                          child: Center(
+                              child: Text(
+                        title,
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w600),
+                      )))
+                    ],
+                  )
 
             // Center(
             //   child: Row(
