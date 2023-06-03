@@ -65,7 +65,12 @@ class _FichePageViewState extends ConsumerState<FichePageView> {
     if (ref.watch(provider).isLoading) {
       return const CircularProgressIndicator();
     }
-    if (ref.watch(provider).genericPageCreator.context_menu == null) {
+
+    if (ref.watch(provider).isError) {
+      return null;
+    }
+
+    if (ref.watch(provider).genericPageCreator!.context_menu == null) {
       return null;
     }
     return FloatingActionButton(
@@ -80,39 +85,42 @@ class _FichePageViewState extends ConsumerState<FichePageView> {
     }
     if (ref.watch(provider).isError) {
       return Center(
-        child: Text(ref.watch(provider).errorMessage),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(ref.watch(provider).errorMessage),
+        ),
       );
     }
     return _content();
   }
 
   Widget _content() {
-    return ref.watch(provider).genericPageCreator.createPage();
+    return ref.watch(provider).genericPageCreator!.createPage();
   }
 
   Widget _pageView() {
     return SizedBox(
       height: 700.smh,
       width: AppConstants.designWidth.smw,
-      child: ref.watch(provider).genericPageCreator.createPage(),
+      child: ref.watch(provider).genericPageCreator!.createPage(),
     );
   }
 
   Future<void> _showMenuPopup() async {
     if (kDebugMode) {
-      ref.watch(provider).genericPageCreator.submit_data.forEach((key, value) {
+      ref.watch(provider).genericPageCreator!.submit_data.forEach((key, value) {
         for (var element in value) {
           log("submit field key: $key value: $element");
         }
       });
-      log("submit fields temps${ref.read(provider).genericPageCreator.submit_data_temps}");
+      log("submit fields temps${ref.read(provider).genericPageCreator!.submit_data_temps}");
     }
 
     await showDialog(
         context: context,
         builder: (context) {
           List<MenuItemModel> menuItems =
-              ref.watch(provider).genericPageCreator.context_menu!;
+              ref.watch(provider).genericPageCreator!.context_menu!;
           return Dialog(
             child: ListView.builder(
               shrinkWrap: true,
@@ -143,7 +151,7 @@ class _FichePageViewState extends ConsumerState<FichePageView> {
               RequestActionEnum.Action) {
             ref
                 .read(provider)
-                .genericPageCreator
+                .genericPageCreator!
                 .submitToServer(menuItemModel.apiUrl!);
           } else if (menuItemModel.apiParams!.requestAction ==
               RequestActionEnum.GetRow) {
@@ -152,7 +160,7 @@ class _FichePageViewState extends ConsumerState<FichePageView> {
                     requestAction: RequestActionEnum.GetRow,
                     parameters: ref
                         .watch(provider)
-                        .genericPageCreator
+                        .genericPageCreator!
                         .submit_data_temps));
           }
         },

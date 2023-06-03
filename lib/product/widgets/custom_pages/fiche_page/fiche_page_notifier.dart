@@ -25,11 +25,15 @@ class FichePageNotifier extends ChangeNotifier
 
   Box? box;
 
-  late final GenericPageCreator genericPageCreator;
+  GenericPageCreator? genericPageCreator;
 
   Future<void> getFicheData() async {
     try {
       isLoading = true;
+      if (menuItemModel.name == null) {
+        throw Exception(
+            "Sistemsel bir hata oluştu. Lütfen tekrar deneyiniz. (Menü ismi verilmemiş)");
+      }
       box ??= await CacheService.instance.getFormBox(menuItemModel.name!);
       final ResponseModel responseModel =
           await NetworkService.post(apiUrl, body: apiParams.toJson());
@@ -38,6 +42,10 @@ class FichePageNotifier extends ChangeNotifier
         genericPageCreator = GenericPageCreator(
             json: responseModel.data, box: box!, mainSetState: notifyListeners);
         log("generic page oluşturuldu", name: "FichePageNotifier true");
+        if (genericPageCreator == null) {
+          throw Exception(
+              "Sistemsel bir hata oluştu. Lütfen tekrar deneyiniz.");
+        }
       } else {
         errorMessage = responseModel.errorMessage;
         log("errorMessage: ${responseModel.errorMessage}",
