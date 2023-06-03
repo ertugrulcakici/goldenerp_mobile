@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:goldenerp/core/services/navigation/navigation_service.dart';
@@ -10,23 +11,24 @@ import 'package:goldenerp/core/services/network/response_model.dart';
 import 'package:goldenerp/core/services/theme/custom_colors.dart';
 
 abstract class NetworkService {
-  static late Dio _dio;
+  static final Dio _dio = Dio(
+    BaseOptions(
+      connectTimeout: _requestTime,
+      receiveTimeout: _requestTime,
+      contentType: Headers.jsonContentType,
+    ),
+  );
+
   static const debug = true;
   static const debugDetailed = true;
 
-  static int? _requestTime;
+  static const int _requestTime = kDebugMode ? 10000 : 30000;
   static bool initialized = false;
   static bool isUserSet = false;
+  static String baseUrl = "";
 
-  static void init(String baseUrl) {
-    _requestTime = 30000;
-
-    _dio = Dio(BaseOptions(
-        connectTimeout: _requestTime,
-        receiveTimeout: _requestTime,
-        contentType: Headers.jsonContentType,
-        baseUrl: baseUrl));
-
+  static void init(String base) {
+    baseUrl = base;
     (_dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
         (HttpClient client) {
       client.badCertificateCallback =
@@ -46,7 +48,7 @@ abstract class NetworkService {
   static Future<ResponseModel<T>> get<T>(String url,
       {Map<String, dynamic>? queryParameters,
       Map<String, dynamic>? headers}) async {
-    String fullUrl = url;
+    String fullUrl = baseUrl + url;
     try {
       EasyLoading.instance.backgroundColor = Colors.yellow;
       EasyLoading.instance.indicatorColor = Colors.white;
@@ -113,7 +115,7 @@ abstract class NetworkService {
       {Map<String, dynamic>? queryParameters,
       dynamic body,
       Map<String, dynamic>? headers}) async {
-    String fullUrl = url;
+    String fullUrl = baseUrl + url;
     try {
       EasyLoading.instance.backgroundColor =
           CustomColors.primaryColor.withOpacity(0.7);
