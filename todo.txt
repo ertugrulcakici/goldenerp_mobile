@@ -1,8 +1,0 @@
-* gönderirken mi veya kaydederken mi her tab modelin fieldlerine göre doldurulacak.
-* relationmodel de override diye birşey gerek mi onu sor. ona göre keyler alınırken eğer override false ise yeni keyi kaydetmesin.
-* submit_temp den ne zaman submit e gidicek veri onu sor. form ne zaman kaydedilecek (sayfa değiştirirken mi?)
-
-
-//
-
-generic_page_creator de, uzunluğu 1 den büyük olan listelerdeki son veriyi siliyoruz. Bunu ilerde değiştireceğiz ve başka çözüm bulacağız.

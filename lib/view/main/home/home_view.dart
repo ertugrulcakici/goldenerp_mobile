@@ -9,20 +9,15 @@ class HomeView extends ConsumerStatefulWidget {
 }
 
 class _HomeViewState extends ConsumerState<HomeView> {
-  // ChangeNotifierProvider<MainLandingPage> _mainLandingPage = ChangeNotifierProvider((ref) => MainLandingPage());
-
   @override
   Widget build(BuildContext context) {
-    return CustomScaffold(pageTitle: "Home", activeBack: false, body: _body());
+    return CustomScaffold(
+        pageTitle: "Anasayfa", activeBack: false, body: _body());
   }
 
   Widget _body() {
-    // if (condition) {
-
-    // }
-    // return ;
     return const Center(
-      child: Text("Home"),
+      child: Text(""),
     );
   }
 }
